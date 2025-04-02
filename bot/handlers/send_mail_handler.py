@@ -9,7 +9,7 @@ from bot.buttons.text import be_driver, be_driver_kr, be_driver_ru, mail_text, m
     from_samarkand, mail_text_ru
 from bot.dispatcher import dp, bot
 
-groups = [1974800905]
+groups = [-1002610299047]
 
 
 @dp.message_handler(Text(equals=[be_driver, be_driver_kr, be_driver_ru]))
