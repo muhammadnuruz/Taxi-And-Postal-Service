@@ -117,7 +117,7 @@ async def process_taxi_order(msg: types.Message, phone_number: str, state: FSMCo
     for group in groups:
         try:
             await bot.send_message(chat_id=group,
-                                   text=order_text + "\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
+                                   text=order_text + f"\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
                                    parse_mode="HTML")
         except Exception as e:
             print(f"Guruhga xabar yuborishda xatolik: {e}")

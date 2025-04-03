@@ -98,7 +98,7 @@ async def process_phone_number(msg: types.Message, phone_number: str, state: FSM
     for group in groups:
         try:
             await bot.send_message(chat_id=group,
-                                   text=offer_text + "\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
+                                   text=offer_text + f"\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
                                    parse_mode="HTML")
         except Exception as e:
             print(f"Guruhga xabar yuborishda xatolik: {e}")
