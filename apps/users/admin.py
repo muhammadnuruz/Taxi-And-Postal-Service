@@ -1,40 +1,35 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django import forms
-from apps.users.models import User
-from django.contrib.auth.models import Group as _
+from django.contrib.auth.hashers import make_password, is_password_usable
+from django.utils.translation import gettext_lazy as _
+from .models import User
 
 
-class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField(label="Password",
-                                         help_text="Raw passwords are not stored, so there is no way to see this user's password, but you can change the password using <a href=\"../password/\">this form</a>.")
-
-    class Meta:
-        model = User
-        fields = ('full_name', 'password', 'is_staff')
-
-    def clean_password(self):
-        return self.initial["password"]
-
-
-class UserAdmin(BaseUserAdmin):
-    form = UserChangeForm
-
-    list_display = ('full_name', 'is_staff')
-    list_filter = ('is_staff',)
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'full_name', 'is_active', 'is_staff', 'is_superuser', 'created_at', 'updated_at')
+    list_display_links = ('id', 'full_name')
+    list_editable = ('is_active', 'is_staff')
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'created_at')
+    search_fields = ('full_name',)
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
-        (None, {'fields': ('full_name', 'password', 'is_staff')}),
+        (None, {'fields': ('full_name', 'password')}),
+        (_('Permissions'), {
+            'classes': ('collapse',),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        (_('Timestamps'), {'fields': ('created_at', 'updated_at')}),
     )
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
-            'fields': ('full_name', 'password1', 'password2', 'is_staff'),
+            'classes': ('wide', 'extrapretty'),
+            'fields': ('full_name', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser'),
         }),
     )
-    search_fields = ('full_name',)
-    ordering = ('full_name',)
+    filter_horizontal = ('groups', 'user_permissions')
 
-
-admin.site.unregister(_)
-admin.site.register(User, UserAdmin)
+    def save_model(self, request, obj, form, change):
+        if obj.password and not obj.password.startswith('pbkdf2') and is_password_usable(obj.password):
+            obj.password = make_password(obj.password)
+        super().save_model(request, obj, form, change)
