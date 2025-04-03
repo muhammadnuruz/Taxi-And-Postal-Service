@@ -3,7 +3,7 @@ import asyncio
 from aiogram import executor
 
 from bot.dispatcher import bot
-from bot.handlers import send_periodic_messages
+from bot.handlers.schudele_handler import send_periodic_messages
 
 admins = [1974800905, 725168806]
 GROUP_IDS = [-1002609258755, -1002646296317, -1002407377689]
