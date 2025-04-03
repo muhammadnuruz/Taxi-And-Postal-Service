@@ -108,7 +108,6 @@ async def process_taxi_order(msg: types.Message, phone_number: str, state: FSMCo
 
     order_text = (
         f"🚕 Yangi taksi buyurtmasi!\n\n"
-        f"👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})\n"
         f"®️ Username: {msg.from_user.username}\n"
         f"📍 Yo‘nalish: {user_data.get('address')}\n"
         f"👥 Yo‘lovchilar soni: {user_data.get('passenger_count')}\n"
@@ -117,7 +116,9 @@ async def process_taxi_order(msg: types.Message, phone_number: str, state: FSMCo
 
     for group in groups:
         try:
-            await bot.send_message(chat_id=group, text=order_text, parse_mode="HTML")
+            await bot.send_message(chat_id=group,
+                                   text=order_text + "\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
+                                   parse_mode="HTML")
         except Exception as e:
             print(f"Guruhga xabar yuborishda xatolik: {e}")
 
