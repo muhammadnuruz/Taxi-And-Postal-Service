@@ -2,7 +2,7 @@ import logging
 import asyncio
 from aiogram import executor
 from bot.dispatcher import bot, dp
-from bot.handlers import send_periodic_messages
+from bot.handlers.schudele_handler import send_periodic_messages
 
 admins = [1974800905, 725168806]
 
