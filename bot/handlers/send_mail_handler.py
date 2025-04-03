@@ -15,11 +15,14 @@ groups = [-1002610299047]
 @dp.message_handler(Text(equals=[be_driver, be_driver_kr, be_driver_ru]))
 async def be_driver_function(msg: types.Message):
     if msg.text == be_driver:
-        await msg.answer(text="Taksi haydovchisi bo‘lishni xohlovchilar uchun taklif!\nMurojaat uchun: @Raximjon863👇\n+998 93 536 59 85")
+        await msg.answer(
+            text="Taksi haydovchisi bo‘lishni xohlovchilar uchun taklif!\nMurojaat uchun: @Raximjon863👇\n+998 93 536 59 85")
     elif msg.text == be_driver_kr:
-        await msg.answer(text="Такси ҳайдовчиси бўлишни хоҳловчилар учун таклиф!\нМурожаат учун: @Raximjon863👇\n+998 93 536 59 85")
+        await msg.answer(
+            text="Такси ҳайдовчиси бўлишни хоҳловчилар учун таклиф!\нМурожаат учун: @Raximjon863👇\n+998 93 536 59 85")
     else:
-        await msg.answer(text="Предложение для тех, кто хочет стать таксистом!\nДля подачи заявки: @Raximjon863👇\n+998 93 536 59 85")
+        await msg.answer(
+            text="Предложение для тех, кто хочет стать таксистом!\nДля подачи заявки: @Raximjon863👇\n+998 93 536 59 85")
 
 
 @dp.message_handler(Text(equals=[mail_text, mail_text_kr, mail_text_ru]))
@@ -98,7 +101,7 @@ async def process_phone_number(msg: types.Message, phone_number: str, state: FSM
     for group in groups:
         try:
             await bot.send_message(chat_id=group,
-                                   text=offer_text + f"\n👤 Yuboruvchi: [{msg.from_user.full_name}](tg://user?id={msg.from_user.id})",
+                                   text=offer_text + f"\n👤 Yuboruvchi:  <a href='tg://user?id={msg.from_user.id}'>{msg.from_user.full_name}</a>",
                                    parse_mode="HTML")
         except Exception as e:
             print(f"Guruhga xabar yuborishda xatolik: {e}")
