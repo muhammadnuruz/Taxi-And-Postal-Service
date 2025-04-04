@@ -120,20 +120,3 @@ async def language_function_1(call: types.CallbackQuery, state: FSMContext):
         await call.message.answer(text="Тил ўзгартирилди 🇺🇿", reply_markup=await main_menu_buttons(call.from_user.id))
     else:
         await call.message.answer(text="Язык изменен 🇷🇺", reply_markup=await main_menu_buttons(call.from_user.id))
-
-
-def get_drivers_list():
-    response = requests.get("http://127.0.0.1:8000/api/drivers/")
-    if response.status_code == 200:
-        drivers_data = response.json()['results']
-        return [driver['chat_id'] for driver in drivers_data]
-    else:
-        return []
-
-
-@dp.message_handler(content_types=ContentType.PHOTO)
-async def delete_photo_if_not_driver(message: types.Message):
-    drivers_chat_ids = get_drivers_list()
-
-    if message.from_user.id not in drivers_chat_ids:
-        await message.delete()
