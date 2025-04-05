@@ -45,11 +45,17 @@ Tilni tanlang
 Выберите язык""", reply_markup=await language_buttons())
     except KeyError:
         if tg_user.get('language') == 'uz':
-            await msg.answer(text=f"Bot yangilandi ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
+            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
+ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
+ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
         elif tg_user.get('language') == 'kr':
-            await msg.answer(text=f"Бот янгиланди ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
+            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
+ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
+ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
         else:
-            await msg.answer(text=f"Бот обновлен ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
+            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
+ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
+ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
 
 
 @dp.callback_query_handler(Text(startswith='language_'), state='language_1')
