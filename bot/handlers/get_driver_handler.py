@@ -45,8 +45,8 @@ async def ask_passenger_count(msg: types.Message, state: FSMContext):
     }
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.row(KeyboardButton("1"), KeyboardButton("2"))
-    keyboard.row(KeyboardButton("3"), KeyboardButton("4"))
+    keyboard.row(KeyboardButton("1 киши"), KeyboardButton("2 киши"))
+    keyboard.row(KeyboardButton("3 киши"), KeyboardButton("4 киши"))
 
     back_button_texts = {
         "uz": back_main_menu,
@@ -58,9 +58,9 @@ async def ask_passenger_count(msg: types.Message, state: FSMContext):
     await msg.answer(messages[lang], reply_markup=keyboard)
 
 
-@dp.message_handler(Text(equals=["1", "2", "3", "4"]), state='passenger_count')
+@dp.message_handler(Text(equals=["1 киши", "2 киши", "3 киши", "4 киши"]), state='passenger_count')
 async def ask_phone_number(msg: types.Message, state: FSMContext):
-    await state.update_data(passenger_count=msg.text)
+    await state.update_data(passenger_count=msg.text[0])
     await state.set_state("taxi_phone_number")
 
     user_data = await state.get_data()
