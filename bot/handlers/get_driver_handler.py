@@ -4,32 +4,31 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-from bot.buttons.reply_buttons import choose_location_buttons, main_menu_buttons
-from bot.buttons.text import from_tashkent, from_samarkand, taxi_text, taxi_text_kr, taxi_text_ru, back_main_menu, \
-    back_main_menu_kr, back_main_menu_ru
+from bot.buttons.reply_buttons import main_menu_buttons
+from bot.buttons.text import from_tashkent, from_samarkand, back_main_menu, back_main_menu_kr, back_main_menu_ru
 from bot.dispatcher import dp, bot
 from bot.handlers.send_mail_handler import groups
 
 
-@dp.message_handler(Text(equals=[taxi_text, taxi_text_kr, taxi_text_ru]))
-async def taxi_function(msg: types.Message, state: FSMContext):
-    await state.set_state("location_taxi")
-    await state.update_data(order_type='taxi')
-    if msg.text == taxi_text:
-        lang = "uz"
-        text = "🛣 Qaysi yo'nalishda taksi buyurtma bermoqchisiz? ⬇️"
-    elif msg.text == taxi_text_kr:
-        lang = "kr"
-        text = "🛣 Қайси йўналишда такси буюртма бермоқчисиз? ⬇️"
-    else:
-        lang = "ru"
-        text = "🛣 Выберите направление для заказа такси ⬇️"
+# @dp.message_handler(Text(equals=[taxi_text, taxi_text_kr, taxi_text_ru]))
+# async def taxi_function(msg: types.Message, state: FSMContext):
+#     await state.set_state("location_taxi")
+#     await state.update_data(order_type='taxi')
+#     if msg.text == taxi_text:
+#         lang = "uz"
+#         text = "🛣 Qaysi yo'nalishda taksi buyurtma bermoqchisiz? ⬇️"
+#     elif msg.text == taxi_text_kr:
+#         lang = "kr"
+#         text = "🛣 Қайси йўналишда такси буюртма бермоқчисиз? ⬇️"
+#     else:
+#         lang = "ru"
+#         text = "🛣 Выберите направление для заказа такси ⬇️"
+#
+#     await state.update_data(language=lang)
+#     await msg.answer(text, reply_markup=await choose_location_buttons(msg.text))
 
-    await state.update_data(language=lang)
-    await msg.answer(text, reply_markup=await choose_location_buttons(msg.text))
 
-
-@dp.message_handler(Text(equals=[from_tashkent, from_samarkand]), state='location_taxi')
+@dp.message_handler(Text(equals=[from_tashkent, from_samarkand]), state='*')
 async def ask_passenger_count(msg: types.Message, state: FSMContext):
     address = 'tashkent-samarkand' if msg.text == from_tashkent else 'samarkand-tashkent'
     await state.update_data(address=address)

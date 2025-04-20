@@ -25,7 +25,7 @@ async def be_driver_function(msg: types.Message):
             text="Предложение для тех, кто хочет стать таксистом!\nДля подачи заявки: @Raximjon863👇\n+998 93 536 59 85")
 
 
-@dp.message_handler(Text(equals=[mail_text, mail_text_kr, mail_text_ru]))
+@dp.message_handler(Text(equals=[mail_text, mail_text_kr, mail_text_ru]), state="*")
 async def mail_function(msg: types.Message, state: FSMContext):
     await state.set_state("location_mail")
     await state.update_data(offer_type='mail')

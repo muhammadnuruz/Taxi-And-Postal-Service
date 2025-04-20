@@ -1,14 +1,10 @@
-import json
 import requests
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Text
-from aiogram.types import ContentType
 
-from bot.buttons.inline_buttons import language_buttons
 from bot.buttons.reply_buttons import main_menu_buttons
-from bot.buttons.text import back_main_menu, choice_language, choice_language_ru, back_main_menu_ru, choice_language_kr, \
-    back_main_menu_kr
+from bot.buttons.text import back_main_menu, back_main_menu_ru, back_main_menu_kr
 from bot.dispatcher import dp, bot
 from main import admins
 
@@ -28,101 +24,30 @@ async def back_main_menu_function_1(call: types.CallbackQuery, state: FSMContext
 
 @dp.message_handler(CommandStart())
 async def start_handler(msg: types.Message, state: FSMContext):
-    tg_user = json.loads(
-        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{msg.from_user.id}/").content)
-    try:
-        if tg_user['detail']:
-            await state.set_state('language_1')
-            await msg.answer(text="""
-Tilni tanlang
+    await state.finish()
+    data = {
+        "chat_id": str(msg.from_user.id),
+        "username": msg.from_user.username,
+        "full_name": msg.from_user.full_name,
+        "language": "uz"
+    }
 
--------------
+    response = requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{msg.from_user.id}/")
+    if response.status_code == 404:
+        requests.post(url="http://127.0.0.1:8000/api/telegram-users/create/", data=data)
+    else:
+        tg_user = response.json()
+        requests.put(url=f"http://127.0.0.1:8000/api/telegram-users/update/{tg_user['id']}/", data=data)
+    await state.set_state("location_mail")
+    await state.set_state("location_taxi")
+    await state.update_data(order_type='taxi')
+    await msg.answer(text=f"""
+👋 Assalomu alaykum {msg.from_user.first_name}! botimizga xush kelibsiz.
 
-Тилни танланг
-
--------------
-
-Выберите язык""", reply_markup=await language_buttons())
-    except KeyError:
-        if tg_user.get('language') == 'uz':
-            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
-ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
-ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
-        elif tg_user.get('language') == 'kr':
-            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
-ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
-ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
-        else:
-            await msg.answer(text=f"""🏢КАЙСИ ЙУНАЛИШГА
-ОДАМ ВА ПОЧТА ЖУНАТМОКЧИ
-ЭКАНЛИГИЗНИ ТАНЛАНГ⬇️""", reply_markup=await main_menu_buttons(msg.from_user.id))
-
-
-@dp.callback_query_handler(Text(startswith='language_'), state='language_1')
-async def language_function(call: types.CallbackQuery, state: FSMContext):
-    await call.message.delete()
+🛣 Qaysi yo'nalishda taksi buyurtma bermoqchisiz? ⬇️:""", reply_markup=await main_menu_buttons(msg.from_user.id))
     for admin in admins:
         await bot.send_message(chat_id=admin, text=f"""
 Yangi user🆕
-ID: <a href='tg://user?id={call.from_user.id}'>{call.from_user.id}</a>
-Username: @{call.from_user.username}
-Ism-Familiya: {call.from_user.full_name}""", parse_mode='HTML')
-    data = {
-        "chat_id": str(call.from_user.id),
-        "username": call.from_user.username,
-        "full_name": call.from_user.full_name,
-        'language': call.data.split('_')[-1]
-    }
-    requests.post(url=f"http://127.0.0.1:8000/api/telegram-users/create/", data=data)
-    if call.data.split("_")[-1] == 'uz':
-        await call.message.answer(text=f"""
-👋 Assalomu alaykum {call.from_user.first_name}! botimizga xush kelibsiz.
-
-✅Quyidagi xizmatlardan birini tanlang:""",
-                                  reply_markup=await main_menu_buttons(call.from_user.id))
-    elif call.data.split("_")[-1] == "kr":
-        await call.message.answer(text=f"""
-👋 Ассалому алайкум {call.from_user.first_name}! ботимизга хуш келибсиз.
-
-✅Қуйидаги хизматлардан бирини танланг:""", reply_markup=await main_menu_buttons(call.from_user.id))
-    else:
-        await call.message.answer(text=f"""
-👋 Привет {call.from_user.first_name}! Добро пожаловать в наш бот.
-
-✅Выберите одну из следующих услуг:""", reply_markup=await main_menu_buttons(call.from_user.id))
-    await state.finish()
-
-
-@dp.message_handler(Text(equals=[choice_language, choice_language_ru, choice_language_kr]))
-async def change_language_function_1(msg: types.Message):
-    await msg.answer(text="""
-Tilni tanlang
-
--------------
-
-Тилни танланг
-
--------------
-
-Выберите язык""", reply_markup=await language_buttons())
-
-
-@dp.callback_query_handler(Text(startswith='language_'))
-async def language_function_1(call: types.CallbackQuery, state: FSMContext):
-    await state.finish()
-    tg_user = json.loads(
-        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
-    data = {
-        "chat_id": str(call.from_user.id),
-        "username": call.from_user.username,
-        "full_name": call.from_user.full_name,
-        "language": call.data.split("_")[-1]
-    }
-    requests.put(url=f"http://127.0.0.1:8000/api/telegram-users/update/{tg_user['id']}/", data=data)
-    await call.message.delete()
-    if call.data.split("_")[-1] == 'uz':
-        await call.message.answer(text="Til o'zgartirildi 🇺🇿", reply_markup=await main_menu_buttons(call.from_user.id))
-    elif call.data.split("_")[-1] == 'kr':
-        await call.message.answer(text="Тил ўзгартирилди 🇺🇿", reply_markup=await main_menu_buttons(call.from_user.id))
-    else:
-        await call.message.answer(text="Язык изменен 🇷🇺", reply_markup=await main_menu_buttons(call.from_user.id))
+ID: <a href='tg://user?id={msg.from_user.id}'>{msg.from_user.id}</a>
+Username: @{msg.from_user.username}
+Ism-Familiya: {msg.from_user.full_name}""", parse_mode='HTML')
