@@ -21,4 +21,4 @@ async def send_periodic_messages(bot: Bot):
             except Exception as e:
                 logging.error(f"❌ Xabar yuborishda xatolik ({group_id}): {e}")
 
-        await asyncio.sleep(2400)
+        await asyncio.sleep(7200)
