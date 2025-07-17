@@ -2,11 +2,29 @@ import requests
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Text
+from aiogram.types import InputFile
 
 from bot.buttons.reply_buttons import main_menu_buttons
 from bot.buttons.text import back_main_menu, back_main_menu_ru, back_main_menu_kr
 from bot.dispatcher import dp, bot
 from main import admins
+
+
+@dp.message_handler(content_types=types.ContentType.NEW_CHAT_MEMBERS)
+async def welcome_new_member(message: types.Message):
+    for user in message.new_chat_members:
+        photo = InputFile("img.png")
+        await message.reply_photo(
+            photo=photo,
+            caption=(
+                f"👋 {user.full_name}, guruhga xush kelibsiz!\n"
+                """
+📍 ИШОНЧЛИ ХАЛОЛ ТАКСИ ХИЗМАТИДАН ФОЙДАЛАНИНГ👇
+
+@Toshkent_Samarqand_Taksi_Uz_Bot
+@Toshkent_Samarqand_Taksi_Uz_Bot"""
+            )
+        )
 
 
 @dp.message_handler(Text(equals=[back_main_menu, back_main_menu_ru, back_main_menu_kr]), state='*')
