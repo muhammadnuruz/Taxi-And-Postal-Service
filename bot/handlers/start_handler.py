@@ -17,8 +17,7 @@ async def welcome_new_member(message: types.Message):
         await message.reply_photo(
             photo=photo,
             caption=(
-                f"👋 {user.full_name}, guruhga xush kelibsiz!\n"
-                """
+"""
 📍 ИШОНЧЛИ ХАЛОЛ ТАКСИ ХИЗМАТИДАН ФОЙДАЛАНИНГ👇
 
 @Toshkent_Samarqand_Taksi_Uz_Bot
