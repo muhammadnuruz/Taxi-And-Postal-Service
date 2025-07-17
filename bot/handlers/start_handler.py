@@ -12,18 +12,17 @@ from main import admins
 
 @dp.message_handler(content_types=types.ContentType.NEW_CHAT_MEMBERS)
 async def welcome_new_member(message: types.Message):
-    for user in message.new_chat_members:
-        photo = InputFile("img.png")
-        await message.reply_photo(
-            photo=photo,
-            caption=(
-"""
+    photo = InputFile("img.png")
+    await message.reply_photo(
+        photo=photo,
+        caption=(
+            """
 📍 ИШОНЧЛИ ХАЛОЛ ТАКСИ ХИЗМАТИДАН ФОЙДАЛАНИНГ👇
-
+            
 @Toshkent_Samarqand_Taksi_Uz_Bot
 @Toshkent_Samarqand_Taksi_Uz_Bot"""
-            )
         )
+    )
 
 
 @dp.message_handler(Text(equals=[back_main_menu, back_main_menu_ru, back_main_menu_kr]), state='*')
