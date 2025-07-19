@@ -14,6 +14,8 @@ groups = [-1002610299047]
 
 @dp.message_handler(Text(equals=[be_driver, be_driver_kr, be_driver_ru]))
 async def be_driver_function(msg: types.Message):
+    if msg.chat.id < 0:
+        return None
     if msg.text == be_driver:
         await msg.answer(
             text="Taksi haydovchisi bo‘lishni xohlovchilar uchun taklif!\nMurojaat uchun: @Raximjon863👇\n+998 93 536 59 85")
@@ -27,6 +29,8 @@ async def be_driver_function(msg: types.Message):
 
 @dp.message_handler(Text(equals=[mail_text, mail_text_kr, mail_text_ru]), state="*")
 async def mail_function(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     await state.set_state("location_mail")
     await state.update_data(offer_type='mail')
     if msg.text == mail_text:
@@ -45,6 +49,8 @@ async def mail_function(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals=[from_tashkent, from_samarkand]), state='location_mail')
 async def mail_function_2(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     address = 'tashkent-samarkand' if msg.text == from_tashkent else 'samarkand-tashkent'
     await state.update_data(address=address)
     await state.set_state("phone_number")
@@ -70,6 +76,8 @@ async def mail_function_2(msg: types.Message, state: FSMContext):
 
 
 async def process_phone_number(msg: types.Message, phone_number: str, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     user_data = await state.get_data()
     lang = user_data.get("language", "uz")
 
@@ -109,12 +117,16 @@ async def process_phone_number(msg: types.Message, phone_number: str, state: FSM
 
 @dp.message_handler(state="phone_number", content_types=types.ContentType.CONTACT)
 async def get_phone_number(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     await process_phone_number(msg, msg.contact.phone_number, state)
     await state.finish()
 
 
 @dp.message_handler(state="phone_number", content_types=types.ContentType.TEXT)
 async def get_phone_number_text(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     if msg.text.startswith("+") and msg.text[1:].isdigit() and len(msg.text) == 13:
         await process_phone_number(msg, msg.text, state)
     else:

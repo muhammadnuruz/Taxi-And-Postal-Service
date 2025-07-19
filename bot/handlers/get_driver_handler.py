@@ -30,6 +30,8 @@ from bot.handlers.send_mail_handler import groups
 
 @dp.message_handler(Text(equals=[from_tashkent, from_samarkand]), state='*')
 async def ask_passenger_count(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     address = 'tashkent-samarkand' if msg.text == from_tashkent else 'samarkand-tashkent'
     await state.update_data(address=address)
     await state.set_state("passenger_count")
@@ -59,6 +61,8 @@ async def ask_passenger_count(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals=["1 киши", "2 киши", "3 киши", "4 киши"]), state='passenger_count')
 async def ask_phone_number(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     await state.update_data(passenger_count=msg.text[0])
     await state.set_state("taxi_phone_number")
 
@@ -83,6 +87,8 @@ async def ask_phone_number(msg: types.Message, state: FSMContext):
 
 
 async def process_taxi_order(msg: types.Message, phone_number: str, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     user_data = await state.get_data()
     lang = user_data.get("language", "uz")
 
@@ -124,11 +130,15 @@ async def process_taxi_order(msg: types.Message, phone_number: str, state: FSMCo
 
 @dp.message_handler(state="taxi_phone_number", content_types=types.ContentType.CONTACT)
 async def get_phone_number(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     await process_taxi_order(msg, msg.contact.phone_number, state)
 
 
 @dp.message_handler(state="taxi_phone_number", content_types=types.ContentType.TEXT)
 async def get_phone_number_text(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     if msg.text.startswith("+") and msg.text[1:].isdigit() and len(msg.text) == 13:
         await process_taxi_order(msg, msg.text, state)
     else:

@@ -40,6 +40,8 @@ async def back_main_menu_function_1(call: types.CallbackQuery, state: FSMContext
 
 @dp.message_handler(CommandStart())
 async def start_handler(msg: types.Message, state: FSMContext):
+    if msg.chat.id < 0:
+        return None
     await state.finish()
     data = {
         "chat_id": str(msg.from_user.id),
